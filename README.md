@@ -17,9 +17,10 @@
 - Install dependencies:
 ```bash
 pip install pyAesCrypt
+```
 
 
-```bash python encryptions.py
+```bash python encryptions.py```
 ## The script will:
 
 Ask for a password.
@@ -29,8 +30,10 @@ Encrypt all files in the specified folder.
 Save them with a .crp extension.
 
 Delete the original files (optional).
-```bash python decryptions.py
-###The script will:
+
+```bash python decryptions.py```
+
+## The script will:
 
 Ask for a password.
 
