@@ -19,7 +19,7 @@
 ```bash
 pip install pyAesCrypt
 
-🚀 Usage
+## 🚀 Usage
 🔐 Encrypt files
 
 Run:
