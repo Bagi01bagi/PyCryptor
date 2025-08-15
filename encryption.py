@@ -1,15 +1,16 @@
 import pyAesCrypt
 import os
-import sys
 
-
-# функция шифрования файла
+# function encryption
 def encryption(file, password):
-
-    # задаём размер буфера
+    # set the buffer size
     buffer_size = 512 * 1024
 
-    # вызываем метод шифрования
+    # skip already-encrypted files
+    if str(file).endswith(".crp"):
+        return
+
+    # call method of encryption
     pyAesCrypt.encryptFile(
         str(file),
         str(file) + ".crp",
@@ -17,30 +18,36 @@ def encryption(file, password):
         buffer_size
     )
 
-    # чтобы видеть результат выводим на печать имя зашифрованного файла
-    print("[Файл '" + str(os.path.splitext(file)[0]) + "' зашифрован]")
+    # show result
+    print("[File '" + os.path.basename(str(os.path.splitext(file)[0])) + "' encrypted]")
 
-    # удаляем исходный файл
-    os.remove(file)
+    # delete the original file (be careful!)
+    #os.remove(file)
 
-# функция сканирования директорий
-def walking_by_dirs(dir, password):
+# scan function
+def walking_by_dirs(directory, password):
+    if not os.path.isdir(directory):
+        raise FileNotFoundError(f"Folder not found: {directory}")
 
-    # перебираем все поддиректории в указанной директории
-    for name in os.listdir(dir):
-        path = os.path.join(dir, name)
+    # Loop through all subdirectories in the specified directory
+    for name in os.listdir(directory):
+        path = os.path.join(directory, name)
 
-        # если находим файл, то шифруем его
+        # optionally skip common service folders
+        if os.path.basename(path) in {'.git', '.venv', '__pycache__'}:
+            continue
+
+        # if we find a file, we encrypt it
         if os.path.isfile(path):
             try:
                 encryption(path, password)
             except Exception as ex:
-                print(ex)
-        # если находим директорию, то повторяем цикл в поисках файлов
+                print("[SKIP]", path, "->", ex)
+        # if we find a directory, then we repeat the cycle in search of files
         else:
             walking_by_dirs(path, password)
 
-
-password = input("Введите пароль для шифрования: ")
-walking_by_dirs("path", password)
+password = input("Введите пароль для шифрования: ").strip()
+# use raw string to avoid backslash escapes on Windows
+walking_by_dirs(r"C:\Users\Beauty\Desktop\mystaff", password)
 # os.remove(str(sys.argv[0]))
