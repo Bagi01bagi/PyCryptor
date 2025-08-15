@@ -18,3 +18,38 @@
 - Install dependencies:
 ```bash
 pip install pyAesCrypt
+
+🚀 Usage
+🔐 Encrypt files
+
+Run:
+
+python encryptions.py
+
+
+The script will:
+
+Ask for a password.
+
+Encrypt all files in the specified folder.
+
+Save them with a .crp extension.
+
+Delete the original files (optional).
+
+🔓 Decrypt files
+
+Run:
+
+python decryptions.py
+
+
+The script will:
+
+Ask for a password.
+
+Decrypt all .crp files in the folder.
+
+Restore them to their original names.
+
+Delete the encrypted files after successful decryption.
