@@ -2,55 +2,44 @@ import pyAesCrypt
 import os
 import sys
 
-# function decryption
+# функция дешифровки файла
 def decryption(file, password):
-    # set the buffer size
+
+    # задаём размер буфера
     buffer_size = 512 * 1024
 
-    # process only .crp files
-    if not str(file).endswith(".crp"):
-        return
+    # вызываем метод расшифровки
+    pyAesCrypt.decryptFile(
+        str(file),
+        str(os.path.splitext(file)[0]),
+        password,
+        buffer_size
+    )
 
-    # output file without .crp extension
-    out_file = str(os.path.splitext(file)[0])
+    # чтобы видеть результат выводим на печать имя зашифрованного файла
+    print("[Файл '" + str(os.path.splitext(file)[0]) + "' дешифрован]")
 
-    try:
-        # call method of decryption
-        pyAesCrypt.decryptFile(
-            str(file),
-            out_file,
-            password,
-            buffer_size
-        )
+    # удаляем исходный файл
+    os.remove(file)
 
-        # to see result we will show decryption file
-        print("[File '" + out_file + "' decrypted ]")
-
-        # delete the original file using the remove method
-        os.remove(file)
-
-    except Exception as ex:
-        print(f"[ERROR] {file} -> {ex}")
-        # if the output file is empty or partially created, remove it
-        if os.path.exists(out_file) and os.path.getsize(out_file) == 0:
-            os.remove(out_file)
-
-# scan function
+# функция сканирования директорий
 def walking_by_dirs(dir, password):
-    # Loop through all subdirectories in the specified directory
+
+    # перебираем все поддиректории в указанной директории
     for name in os.listdir(dir):
         path = os.path.join(dir, name)
 
-        # if we find the file, we decrypt it
+        # если находим файл, то дешифруем его
         if os.path.isfile(path):
             try:
                 decryption(path, password)
             except Exception as ex:
                 print(ex)
-        # if we find a directory, then we repeat the cycle in search of files
+        # если находим директорию, то повторяем цикл в поисках файлов
         else:
             walking_by_dirs(path, password)
 
-password = input("Введите пароль для расшифрования: ")
-walking_by_dirs(r"C:\Users\Beauty\Desktop\mystaff", password)
+
+password = input("Введите пароль для расшифровки: ")
+walking_by_dirs("path", password)
 # os.remove(str(sys.argv[0]))
