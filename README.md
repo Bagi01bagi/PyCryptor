@@ -17,14 +17,14 @@
 - Python 3.x  
 - Install dependencies:
 ```bash
-pip install pyAesCrypt```
+pip install pyAesCrypt
 
 ## 🚀 Usage
 🔐 Encrypt files
 
 Run:
 
-python encryptions.py
+```python encryptions.py
 
 
 The script will:
