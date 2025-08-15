@@ -1,45 +1,53 @@
 import pyAesCrypt
 import os
-import sys
 
-# функция дешифровки файла
+# function decryption
 def decryption(file, password):
-
-    # задаём размер буфера
+    # set the buffer size
     buffer_size = 512 * 1024
 
-    # вызываем метод расшифровки
-    pyAesCrypt.decryptFile(
-        str(file),
-        str(os.path.splitext(file)[0]),
-        password,
-        buffer_size
-    )
+    # process only .crp files
+    if not str(file).endswith(".crp"):
+        return
 
-    # чтобы видеть результат выводим на печать имя зашифрованного файла
-    print("[Файл '" + str(os.path.splitext(file)[0]) + "' дешифрован]")
+    out_file = str(os.path.splitext(file)[0])
 
-    # удаляем исходный файл
-    os.remove(file)
+    try:
+        # call method of decryption
+        pyAesCrypt.decryptFile(
+            str(file),
+            out_file,
+            password,
+            buffer_size
+        )
 
-# функция сканирования директорий
-def walking_by_dirs(dir, password):
+        # show result
+        print("[File '" + out_file + "' decrypted]")
 
-    # перебираем все поддиректории в указанной директории
-    for name in os.listdir(dir):
-        path = os.path.join(dir, name)
+        # delete the original encrypted file
+        #os.remove(file)
 
-        # если находим файл, то дешифруем его
+    except Exception as ex:
+        print("[ERROR]", file, "->", ex)
+        # if output file was created but empty (failed), remove it
+        if os.path.exists(out_file) and os.path.getsize(out_file) == 0:
+            os.remove(out_file)
+
+# scan function
+def walking_by_dirs(directory, password):
+    # Loop through all subdirectories in the specified directory
+    for name in os.listdir(directory):
+        path = os.path.join(directory, name)
+
         if os.path.isfile(path):
             try:
                 decryption(path, password)
             except Exception as ex:
                 print(ex)
-        # если находим директорию, то повторяем цикл в поисках файлов
         else:
             walking_by_dirs(path, password)
 
-
-password = input("Введите пароль для расшифровки: ")
-walking_by_dirs("path", password)
+password = input("Введите пароль для расшифрования: ").strip()
+# use raw string to avoid backslash issues; Desktop с заглавной буквы
+walking_by_dirs(r"C:\Users\Beauty\Desktop\mystaff", password)
 # os.remove(str(sys.argv[0]))
